@@ -1,0 +1,21 @@
+SELECT 1, count(1) FROM public.green_taxi_trips WHERE lpep_dropoff_datetime >= '2019-10-01 00:00:00' AND lpep_dropoff_datetime < '2019-11-01 00:00:00' 
+AND trip_distance <= 1
+UNION
+SELECT 2, count(1) FROM public.green_taxi_trips WHERE lpep_dropoff_datetime >= '2019-10-01 00:00:00' AND lpep_dropoff_datetime < '2019-11-01 00:00:00' 
+AND trip_distance >= 1 and trip_distance <= 3
+UNION
+SELECT 3, count(1) FROM public.green_taxi_trips WHERE lpep_dropoff_datetime >= '2019-10-01 00:00:00' AND lpep_dropoff_datetime < '2019-11-01 00:00:00' 
+AND trip_distance > 3 and trip_distance <= 7
+UNION
+SELECT 4, count(1) FROM public.green_taxi_trips WHERE lpep_dropoff_datetime >= '2019-10-01 00:00:00' AND lpep_dropoff_datetime < '2019-11-01 00:00:00' 
+AND trip_distance > 10;
+
+select max(trip_distance) from public.green_taxi_trips;
+
+select tz."Zone", sum(tt.total_amount) from public.green_taxi_trips tt, taxi_zones tz where lpep_pickup_datetime >= '2019-10-18 00:00:00' 
+AND lpep_pickup_datetime <= '2019-10-18 23:59:59' AND tt."PULocationID" = tz."LocationID" group by tz."Zone" having sum(tt.total_amount) > 13000;
+
+
+select max(tt.tip_amount), dtz."Zone" from public.green_taxi_trips tt, taxi_zones tz, taxi_zones dtz where EXTRACT(year FROM lpep_pickup_datetime) = 2019 
+AND EXTRACT(month FROM lpep_pickup_datetime) = 10 AND tz."LocationID" = tt."PULocationID" AND tz."Zone" = 'East Harlem North' AND dtz."LocationID" = tt."DOLocationID" 
+group by dtz."Zone" order by max(tt.tip_amount) desc;
